@@ -6,9 +6,31 @@
   font-size: 500%;
 }
 
-.App-header {
+.App-main {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-main-bottom {
+  background-color: #282c34;
+  min-height: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-extra {
+  background-color: #2c313a;
+  min-height: 70vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,13 +40,13 @@
 }
 
 .App-footer {
-  background-color: #2c313a;
-  min-height: 5vh;
+  background-color: #282c34;
+  min-height: 8vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(2vmin);
+  font-size: calc(8px + 2vmin);
   color: white;
 }
 
