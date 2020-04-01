@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button } from 'react-bootstrap/Button';
 
 class App extends Component {
   constructor(props) {
@@ -67,7 +69,7 @@ class App extends Component {
     if (error) {
       return (
         <div className="App">
-          <header className="App-header">
+          <header className="App-main-error">
             <h1>Error while loading data</h1>
             <p>This might be a problem with the server</p>
           </header>
@@ -76,7 +78,7 @@ class App extends Component {
     } else if (!isLoaded) {
       return (
         <div className="App">
-          <header className="App-header">
+          <header className="App-main-error">
             <h2>Loading...</h2>
           </header>
         </div>
