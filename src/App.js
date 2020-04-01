@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button } from 'react-bootstrap/Button';
+import { Button } from 'react-bootstrap';
 
 class App extends Component {
   constructor(props) {
@@ -9,20 +9,21 @@ class App extends Component {
     this.api_key = "mB2Oko638Vjt4o0H8m6nwpiIRVrRM4Eh"; // This should not be stored here
     this.state = {
       error: null,
-      isLoaded: false,
+      initialLoaded: false,
       body: [],
       measurementDate: "",
-      measurementTime: ""
+      measurementTime: "",
+      timer: 0,
+      timerDefault: 60
     }
   }
 
   componentDidMount() {
-    this.fetchData()
-    setInterval(async () => {this.fetchData()}, 60000);
+    setInterval(async () => {this.timerControl()}, 1000);
   }
 
-  async fetchData() {
-    console.log("Fetch")
+  fetchData() {
+    const { timerDefault } = this.state;
 
     try {
       // Fetch from weather api
@@ -30,11 +31,10 @@ class App extends Component {
       .then(res => res.json())
       .then(
         (result) => {
-
           var datetime = this.parseDatetime(result.body[0].time)
 
           this.setState({
-            isLoaded: true,
+            initialLoaded: true,
             body: result.body,
             measurementDate: datetime[0],
             measurementTime: datetime[1]
@@ -43,7 +43,7 @@ class App extends Component {
         (error) => {
           console.log(error)
           this.setState({
-            isLoaded: true,
+            initialLoaded: true,
             error
           });
         }
@@ -51,6 +51,10 @@ class App extends Component {
     } catch (e) {
       console.log(e);
     }
+
+    this.setState({
+      timer: timerDefault
+    })
   }
 
   parseDatetime(datetime) {
@@ -63,8 +67,25 @@ class App extends Component {
     return datetimeData;
   }
 
+  async timerControl() {
+    const { timer } = this.state;
+
+    if (timer > 0) {
+      let time = timer - 1;
+      this.setState({
+        timer: time
+      })
+    } else {
+      this.fetchData();
+    }
+  }
+
+  updateNow() {
+    this.fetchData();
+  }
+
   render () {
-    const { error, isLoaded, body, measurementDate, measurementTime } = this.state;
+    const { error, initialLoaded, body, measurementDate, measurementTime, timer } = this.state;
 
     if (error) {
       return (
@@ -75,7 +96,7 @@ class App extends Component {
           </header>
         </div>
       );
-    } else if (!isLoaded) {
+    } else if (!initialLoaded) {
       return (
         <div className="App">
           <header className="App-main-error">
@@ -110,9 +131,15 @@ class App extends Component {
             </h3>
 
             <p>
+            <br />
               Measured at {measurementTime} <br /> on {measurementDate} <br /> <br />
-              Measurements are updated once per minute.
+              Measurements are updated once per minute.<br />
+              Next update in {timer} seconds
             </p>
+
+            <Button variant="outline-light" onClick={this.updateNow.bind(this)}>
+              Update now
+            </Button>
           </section>
 
           <footer className="App-footer">
