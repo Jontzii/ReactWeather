@@ -16,7 +16,7 @@ class App extends Component {
 
   componentDidMount() {
     this.fetchData()
-    setInterval(async () => {this.fetchData()}, 30000);
+    setInterval(async () => {this.fetchData()}, 60000);
   }
 
   async fetchData() {
@@ -24,7 +24,7 @@ class App extends Component {
 
     try {
       // Fetch from weather api
-      fetch('http://data.jontzi.com/weather/api/1/latest?api_key=' + this.api_key)
+      fetch('https://data.jontzi.com/weather/api/1/latest?api_key=' + this.api_key)
       .then(res => res.json())
       .then(
         (result) => {
