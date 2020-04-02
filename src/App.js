@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button } from 'react-bootstrap';
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 class App extends Component {
   constructor(props) {
@@ -85,7 +85,14 @@ class App extends Component {
   }
 
   render () {
-    const { error, initialLoaded, body, measurementDate, measurementTime, timer } = this.state;
+    const { 
+      error, 
+      initialLoaded, 
+      body, 
+      measurementDate, 
+      measurementTime, 
+      timer 
+    } = this.state;
 
     if (error) {
       return (
@@ -137,9 +144,20 @@ class App extends Component {
               Next update in {timer} seconds
             </p>
 
-            <Button variant="outline-light" onClick={this.updateNow.bind(this)}>
-              Update now
-            </Button>
+            <OverlayTrigger
+              placement="right"
+              delay={{ show: 250, hide: 400}}
+              overlay={
+                <Tooltip id="button-tooltip">
+                  Please note that excessive updating will be limited by server
+                </Tooltip>
+              }
+            >
+              <Button variant="outline-light" onClick={this.updateNow.bind(this)}>
+                Update now
+              </Button>
+            </OverlayTrigger>
+            
           </section>
 
           <footer className="App-footer">
