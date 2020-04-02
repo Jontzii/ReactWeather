@@ -1,7 +1,7 @@
 {
-  "homepage": "https://jontzii.github.io/ReactWeather",
+  "homepage": "https://weather.jontzi.com",
   "name": "reactweather",
-  "version": "0.5.0",
+  "version": "0.7.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
