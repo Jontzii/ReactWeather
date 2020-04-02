@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
+import ReactGA from 'react-ga';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { setColor, parseDatetime } from './Misc'
+import { Transition } from 'react-transition-group';
+
+ReactGA.initialize("UA-131317095-3");
 
 class App extends Component {
   constructor(props) {
@@ -14,7 +19,10 @@ class App extends Component {
       measurementDate: "",
       measurementTime: "",
       timer: 0,
-      timerDefault: 60
+      timerDefault: 60,
+      color: "#282c34",
+      colorDefault: "#282c34",
+      prevColor: ""
     }
   }
 
@@ -23,28 +31,32 @@ class App extends Component {
   }
 
   fetchData() {
-    const { timerDefault } = this.state;
-
+    const { timerDefault, colorDefault, color } = this.state;
     try {
       // Fetch from weather api
       fetch('https://data.jontzi.com/weather/api/1/latest?api_key=' + this.api_key)
       .then(res => res.json())
       .then(
         (result) => {
-          var datetime = this.parseDatetime(result.body[0].time)
+          var datetime = parseDatetime(result.body[0].time);
+          var colorNew = setColor(result.body[0].temperature);
 
           this.setState({
             initialLoaded: true,
             body: result.body,
             measurementDate: datetime[0],
-            measurementTime: datetime[1]
+            measurementTime: datetime[1],
+            color: colorNew,
+            prevColor: color
           });
         },
         (error) => {
           console.log(error)
           this.setState({
             initialLoaded: true,
-            error
+            error,
+            color: colorDefault,
+            prevColor: color
           });
         }
       )
@@ -55,16 +67,6 @@ class App extends Component {
     this.setState({
       timer: timerDefault
     })
-  }
-
-  parseDatetime(datetime) {
-    let datetimeData = [];
-
-    let date = new Date(datetime)
-    datetimeData[0] = date.toLocaleDateString('en-FI')
-    datetimeData[1] = date.toLocaleTimeString('en-FI')
-
-    return datetimeData;
   }
 
   async timerControl() {
@@ -91,15 +93,36 @@ class App extends Component {
       body, 
       measurementDate, 
       measurementTime, 
-      timer 
+      timer,
+      color,
+      prevColor
     } = this.state;
+
+    if (color !== prevColor) {
+      // Transition
+    }
+
+    const colorStyle = {
+      backgroundColor: color,
+      Transition: backgroundColor 2s linear
+    }
 
     if (error) {
       return (
         <div className="App">
           <header className="App-main-error">
             <h1>Error while loading data</h1>
-            <p>This might be a problem with the server</p>
+            <p>
+              This might be a problem with the server. <br /><br />
+              Trying again in {timer} seconds
+            </p>
+
+            <Button 
+              variant="outline-light"
+              onClick={this.updateNow.bind(this)}
+            >
+              Try again now
+            </Button>
           </header>
         </div>
       );
@@ -114,18 +137,26 @@ class App extends Component {
     } else {
       return (
         <div className="App">
-          <header className="App-main">
+          <header 
+            className="App-main"
+            style={{
+              backgroundColor: color
+            }}
+          >
             <h1 className="App-temperature">
               {body[0].temperature}°C
             </h1>
           </header>
 
-          <section className="App-main-bottom">
-
+          <section 
+            className="App-main-bottom"
+            style={{ 
+              backgroundColor: color 
+            }}  
+          >
             <p>
               &darr; More data below &darr;
             </p>
-
           </section>
 
           <section className="App-extra">
@@ -140,7 +171,6 @@ class App extends Component {
             <p>
             <br />
               Measured at {measurementTime} <br /> on {measurementDate} <br /> <br />
-              Measurements are updated once per minute.<br />
               Next update in {timer} seconds
             </p>
 
@@ -162,9 +192,8 @@ class App extends Component {
 
           <footer className="App-footer">
             <p>
-              
               Made by <a href="https://github.com/Jontzii" target="_blank" rel="noopener noreferrer" className="App-link">Jontzi</a>
-            </p>
+            </p> 
           </footer>
         </div>
       );
