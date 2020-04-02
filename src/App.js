@@ -2,9 +2,12 @@ import React, { Component } from 'react';
 import ReactGA from 'react-ga';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { setColor, parseDatetime } from './Misc'
-import { Transition } from 'react-transition-group';
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { CSSTransition } from 'react-transition-group';
+import Temperature from './Temperature';
+import Extra, { Footer } from './Extra';
+import Error from './Error';
 
 ReactGA.initialize("UA-131317095-3");
 
@@ -98,32 +101,17 @@ class App extends Component {
       prevColor
     } = this.state;
 
-    if (color !== prevColor) {
-      // Transition
-    }
-
-    const colorStyle = {
-      backgroundColor: color,
-      Transition: backgroundColor 2s linear
-    }
-
     if (error) {
       return (
         <div className="App">
-          <header className="App-main-error">
-            <h1>Error while loading data</h1>
-            <p>
-              This might be a problem with the server. <br /><br />
-              Trying again in {timer} seconds
-            </p>
+          <Error timer={timer} />
 
-            <Button 
+          <Button 
               variant="outline-light"
               onClick={this.updateNow.bind(this)}
-            >
+          >
               Try again now
-            </Button>
-          </header>
+          </Button>
         </div>
       );
     } else if (!initialLoaded) {
@@ -135,66 +123,31 @@ class App extends Component {
         </div>
       )
     } else {
+
+      var extra = [measurementTime, measurementDate, timer];
+
       return (
         <div className="App">
-          <header 
-            className="App-main"
-            style={{
-              backgroundColor: color
-            }}
-          >
-            <h1 className="App-temperature">
-              {body[0].temperature}°C
-            </h1>
-          </header>
-
-          <section 
-            className="App-main-bottom"
-            style={{ 
-              backgroundColor: color 
-            }}  
-          >
-            <p>
-              &darr; More data below &darr;
-            </p>
-          </section>
-
-          <section className="App-extra">
-
-            <h3>
-              Dewpoint: {body[0].dewpoint.toString().substr(0, 5)}°C <br />
-              Humidity: {body[0].humidity.toString().substr(0, 5)}% <br />
-              Pressure: {body[0].pressure.toString().substr(0, 4)}.{body[0].pressure.toString().substr(4, 2)} hPa <br />
-              Air density: {body[0].air_density.toString().substr(0, 4)} kg/m3
-            </h3>
-
-            <p>
-            <br />
-              Measured at {measurementTime} <br /> on {measurementDate} <br /> <br />
-              Next update in {timer} seconds
-            </p>
+          <Temperature temperature={body[0].temperature} color={color} />
+          
+          <div className="App-extra">
+            <Extra body={body} extra={extra} />
 
             <OverlayTrigger
-              placement="right"
-              delay={{ show: 250, hide: 400}}
-              overlay={
-                <Tooltip id="button-tooltip">
-                  Please note that excessive updating will be limited by server
-                </Tooltip>
-              }
+                placement="right"
+                delay={{ show: 250, hide: 400}}
+                overlay={
+                  <Tooltip id="button-tooltip">
+                    Please note that excessive updating will be limited by server
+                  </Tooltip>
+                }
             >
-              <Button variant="outline-light" onClick={this.updateNow.bind(this)}>
-                Update now
-              </Button>
+                <Button variant="outline-light" onClick={this.updateNow.bind(this)}>
+                  Update now
+                </Button>
             </OverlayTrigger>
-            
-          </section>
-
-          <footer className="App-footer">
-            <p>
-              Made by <a href="https://github.com/Jontzii" target="_blank" rel="noopener noreferrer" className="App-link">Jontzi</a>
-            </p> 
-          </footer>
+          </div>
+          <Footer />
         </div>
       );
     }
