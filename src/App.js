@@ -25,7 +25,6 @@ class App extends Component {
       timerDefault: 60,
       color: "#282c34",
       colorDefault: "#282c34",
-      prevColor: ""
     }
   }
 
@@ -50,7 +49,6 @@ class App extends Component {
             measurementDate: datetime[0],
             measurementTime: datetime[1],
             color: colorNew,
-            prevColor: color
           });
         },
         (error) => {
@@ -59,7 +57,6 @@ class App extends Component {
             initialLoaded: true,
             error,
             color: colorDefault,
-            prevColor: color
           });
         }
       )
@@ -97,8 +94,7 @@ class App extends Component {
       measurementDate, 
       measurementTime, 
       timer,
-      color,
-      prevColor
+      color
     } = this.state;
 
     if (error) {
@@ -135,7 +131,7 @@ class App extends Component {
 
             <OverlayTrigger
                 placement="right"
-                delay={{ show: 250, hide: 400}}
+                delay={{ show: 250, hide: 100}}
                 overlay={
                   <Tooltip id="button-tooltip">
                     Please note that excessive updating will be limited by server
